@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Production Magic Game</title>
+
+  <!-- Google Font and Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/e35d70de91.js" crossorigin="anonymous"></script>
+<style>
+body {
+  font-family: 'Arial', sans-serif;
+  background-image: url('https://i.ibb.co/St2BqCV/background.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  color: #333;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+header {
+  text-align: center;
+  background-color: #3e2723;
+  color: white;
+  padding: 20px;
+  border-radius: 10px 10px 0 0;
+  height: 100px;
+}
+
+h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 2.5em;
+  margin-top:-10px;
+}
+
+#score {
+  font-size: 1.2em;
+  margin-top: -20px;
+}
+
+#startBtn {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #ffcc80;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  max-width: 200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#caseSection {
+  margin: 20px 0;
+  background-color: #f0e5d8;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  height: auto; /* Автоматическая подгонка по контенту */
+  min-height: 60px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#casePlaceholder {
+  font-size: 1.2em;
+}
+
+.tab {
+  display: flex;
+  margin-top: 20px;
+  background-color: #e0b084;
+  padding: 10px;
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.tab button {
+  background-color: #6d4c41;
+  color: white;
+  border: 1px solid #5d4037;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 5px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  flex: 1;
+}
+
+.tab button:hover {
+  background-color: #8d6e63;
+}
+
+.tab button.active {
+  background-color: #ffcc80;
+  color: #333;
+}
+
+.tabcontent {
+  display: grid; /* Используем Grid для создания рядов */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Автоматическая подгонка по ширине */
+  grid-gap: 20px; /* Расстояние между картами */
+  padding: 20px;
+  height: 800px; /* Ограничьте высоту для табов */
+  overflow-y: auto; /* Добавьте прокрутку по вертикали */
+
+}
+
+.card {
+  width: 100%;
+  max-width: 250px;
+  height: 400px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  margin: 5px;
+  flex-direction: column; /* Flexbox для вертикальной компоновки */
+}
+
+.card-image {
+    background: url('https://via.placeholder.com/250x150') no-repeat center center;
+    background-size: cover;
+    height: 140px;
+}
+
+/* Заголовок карточки */
+.card-title {
+    text-align: center;
+    font-family: 'Cinzel', serif; /* Фэнтезийный шрифт */
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #ffcc00;
+    color: #333;
+    border-bottom: 2px solid #e5e5e5;
+}
+
+/* Тип карты */
+.card-type {
+    text-align: center;
+    font-size: 14px;
+    color: #777;
+    margin: 5px 0;
+    padding: 5px;
+}
+
+/* Описание карты */
+.card-description {
+    padding: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #555;
+    flex-grow: 1; /* Это позволит описанию занять доступное пространство */
+}
+
+/* Футер карточки */
+.card-footer {
+    padding: 10px;
+    background-color: #f0f0f0;
+    text-align: right;
+    font-size: 10px;
+    color: #888;
+    border-top: 2px solid #e5e5e5;
+    margin-top: auto; /* Позволяет футеру оставаться внизу */
+}
+
+#successPopup {
+  position: fixed;
+  left: 43%;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: none;
+  animation: popupShow 0.5s ease;
+  z-index: 1000;
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  color: #333;
+}
+
+@keyframes popupShow {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+#successPopup p {
+  font-size: 1.5em;
+  margin: 0 0 15px;
+  color: #4caf50;
+}
+
+#closePopup {
+  padding: 10px;
+  background-color: #ffcc80;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#closePopup:hover {
+  background-color: #ffa726;
+}
+
+/* Mobile-friendly design */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.8em;
+  }
+
+  #casePlaceholder {
+    font-size: 1em;
+  }
+
+  .tab button {
+    font-size: 14px;
+  }
+
+  .card {
+      width: 250px;
+      height: 400px;
+      position: relative;
+  }
+  .tabcontent {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  #startBtn {
+    width: 100%;
+  }
+
+  #successPopup p {
+    font-size: 1.2em;
+  }
+}
+
+#hint
+{
+    color: #f0e5d8;
+  }
+
+/* Основные стили кнопки */
+.button {
+  display: inline-block;
+  padding: 15px 30px;
+  font-size: 18px;
+  font-family: 'Cinzel', serif; /* Фэнтезийный шрифт */
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(45deg, #6b4226, #8c5a30); /* Градиент фона для создания текстуры */
+  border: 3px solid #4e301a;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Тень для придания глубины */
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+/* Псевдоэлемент для создания эффекта света при наведении */
+.button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+/* Анимация при наведении: увеличение и подсвечивание */
+.button:hover {
+  background: linear-gradient(45deg, #8c5a30, #b37b47);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+  transform: scale(1.05);
+}
+
+.button:hover::before {
+  opacity: 1;
+}
+
+/* Анимация при нажатии: эффект нажатия кнопки */
+.button:active {
+  background: linear-gradient(45deg, #5b341f, #73472a);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+  transform: scale(0.95);
+}
+
+/* Дополнительный эффект - свечащиеся уголки */
+.button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.button:hover::after {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Общий стиль для прокрутки во всех браузерах */
+.tabcontent {
+  scrollbar-width: thin; /* Firefox: делает скроллбар тоньше */
+  scrollbar-color: #8c5a30 #4e301a; /* Firefox: цвет скроллбара */
+}
+
+/* Webkit (Chrome, Safari) стилизация */
+.tabcontent::-webkit-scrollbar {
+  width: 12px; /* Ширина скроллбара */
+}
+
+/* Стиль ползунка */
+.tabcontent::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #6b4226, #8c5a30); /* Градиент ползунка */
+  border-radius: 10px; /* Закругленные углы */
+  border: 2px solid #4e301a; /* Внешний контур ползунка */
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5); /* Внутренняя тень для объема */
+}
+
+/* Стиль фона трека (дорожки скроллбара) */
+.tabcontent::-webkit-scrollbar-track {
+  background: #3e2723; /* Фон дорожки */
+  border-radius: 10px; /* Закругленные углы для дорожки */
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5); /* Легкая тень для объема */
+}
+
+/* Стиль при наведении на ползунок */
+.tabcontent::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #8c5a30, #b37b47); /* Больше светлый градиент */
+  box-shadow: inset 0 0 7px rgba(0, 0, 0, 0.7); /* Более яркая тень */
+}
+
+/* Стиль при активном нажатии */
+.tabcontent::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(45deg, #5b341f, #73472a); /* Темный градиент при нажатии */
+}
+
+/* Стиль для поп-апа */
+.popup {
+  display: none; /* Скрыт по умолчанию */
+  position: fixed;
+  z-index: 10;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  background-color: #fff8e1;
+  border: 2px solid #8c5a30;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.popup-content {
+  padding: 20px;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  color: #333;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+</style>  
+</head>
+<body>
+ <div class="container">
+  <!-- Score Counter -->
+  <header>
+   
+    <h1>Production Magic Game</h1>
+    <div id="score">Score: 0</div>
+    <button id="startBtn" class="button">Start Adventure</button>
+   
+  </header>
+
+  <!-- Case Display (Drag Target) -->
+  <section id="caseSection" ondrop="drop(event)" ondragover="allowDrop(event)">
+    <div id="casePlaceholder">Start adventure to see your quest. Drag and drop cards with correct spells to solve the quests.</div>
+    <div id="spellsNeeded" class="hidden">Spells Needed: <span id="spellCounter"></span></div>
+    <div id="hint" class="hidden"></div>
+    <div id="correctSpellsList"></div>
+      <!-- Success Popup -->
+  <div id="successPopup" class="hidden">
+    <p>Yes, That could be a solution!<br>You've earned 100 points!</p>
+    <button id="closePopup" onclick="closePopup()">Close</button>
+  </div>
+    
+    <!-- Поп-ап для неправильного заклинания -->
+<div id="wrongSpellPopup" class="popup">
+  <div class="popup-content">
+    <span class="close" onclick="closeWrongSpellPopup()">&times;</span>
+    <p>Try Another spell. But in a real life it may be an option.</p>
+  </div>
+</div>
+
+  </section>
+
+  <!-- Spell Tabs -->
+  <section id="spellSection">
+    <div class="tab">
+      <button class="tablinks" onclick="openTab(event, 'TeamManagement')">Team Management</button>
+      <button class="tablinks" onclick="openTab(event, 'ProjectManagement')">Project Management</button>
+      <button class="tablinks" onclick="openTab(event, 'RiskManagement')">Risk Management</button>
+      <button class="tablinks" onclick="openTab(event, 'Communication')">Communication</button>
+      <button class="tablinks" onclick="openTab(event, 'Stakeholders')">Stakeholders</button>
+    </div>
+
+    <!-- Team Management Spells -->
+    <div id="TeamManagement" class="tabcontent">
+      
+      <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell3" data-spell="Hero's Motivation">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/03.png" width="250" height="140"></div>
+        <div class="card-title">Hero's Motivation</div>
+        <div class="card-type">Team Management</div>
+        <div class="card-description">Boosts team morale and energy, inspiring individuals to go the extra mile.</div>
+        <div class="card-footer">Use when team morale is low.</div>
+      </div>
+
+      <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell4" data-spell="Mentor’s Aura">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/04.png" width="250" height="140"></div>
+        <div class="card-title">Mentor’s Aura</div>
+        <div class="card-type">Team Management</div>
+        <div class="card-description">Guides new or inexperienced team members, offering coaching and mentorship.</div>
+        <div class="card-footer">Use for team members needing guidance or direction.</div>
+      </div>
+
+      <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell5" data-spell="Leadership Boost">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/05.png" width="250" height="140"></div>
+        <div class="card-title">Leadership Boost</div>
+        <div class="card-type">Team Management</div>
+        <div class="card-description">Empowers team leaders to be more effective in managing their teams.</div>
+        <div class="card-footer">Use when team leaders need additional support or direction.</div>
+      </div>
+      <!-- Vision of Growth -->
+<div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spellVisionOfGrowth" data-spell="Vision of Growth">
+  <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/06.png" width="250" height="140"></div>
+  <div class="card-title">Vision of Growth</div>
+  <div class="card-type">Team Management</div>
+  <div class="card-description">Inspires the team to prepare for future growth by planning and implementing technical improvements.</div>
+  <div class="card-footer">Use when preparing the team for scalability and future goals.</div>
+</div>
+      
+            <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell2" data-spell="Armor of Trust">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/02.png" width="250" height="140"></div>
+        <div class="card-title">Armor of Trust</div>
+        <div class="card-type">Team Management</div>
+        <div class="card-description">Builds trust between team members and leadership. Fosters transparency and psychological safety.</div>
+        <div class="card-footer">Great for situations where trust is low.</div>
+      </div>
+      
+            <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell1" data-spell="Team Synergy">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/01.png" width="250" height="140"></div>
+        <div class="card-title">Team Synergy</div>
+        <div class="card-type">Team Management</div>
+        <div class="card-description">Unites the team to work together toward common goals. Helps create a collaborative environment.</div>
+        <div class="card-footer">Use in cases of team misalignment or low cohesion.</div>
+      </div>
+      
+    </div>
+
+    <!-- Project Management Spells -->
+    <div id="ProjectManagement" class="tabcontent">
+      <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell5" data-spell="Iteration Loop">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/07.png" width="250" height="140"></div>
+        <div class="card-title">Iteration Loop</div>
+        <div class="card-type">Project Management</div>
+        <div class="card-description">Encourages iterative work cycles, fostering constant feedback and improvement.</div>
+        <div class="card-footer">Useful in cases of delayed feedback loops or slow iteration.</div>
+     </div>
+
+      <!-- Resource Allocation -->
+<div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spellResourceAllocation" data-spell="Resource Allocation">
+  <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/12.png" width="250" height="140"></div>
+  <div class="card-title">Resource Allocation</div>
+  <div class="card-type">Project Management</div>
+  <div class="card-description">Helps to reassign resources efficiently across teams or projects, ensuring that critical areas get the support they need.</div>
+  <div class="card-footer">Use when resources need to be reallocated to support important tasks.</div>
+</div>
+      
+      <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell6" data-spell="Eye of the Plan">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/08.png" width="250" height="140"></div>
+        <div class="card-title">Eye of the Plan</div>
+        <div class="card-type">Project Management</div>
+        <div class="card-description">Keeps the project on track and ensures alignment with the original goals and scope.</div>
+        <div class="card-footer">Ideal for managing scope creep or unclear project goals.</div>
+      </div>
+
+      <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell8" data-spell="Tempering Features">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/10.png" width="250" height="140"></div>
+        <div class="card-title">Tempering Features</div>
+        <div class="card-type">Project Management</div>
+        <div class="card-description">Helps prioritize features, trimming unnecessary complexity and refocusing on core objectives.</div>
+        <div class="card-footer">Perfect for feature creep issues.</div>
+      </div>
+      <!-- Budget Tweak -->
+<div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spellBudgetTweak" data-spell="Budget Tweak">
+  <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/11.png" width="250" height="140"></div>
+  <div class="card-title">Budget Tweak</div>
+  <div class="card-type">Project Management</div>
+  <div class="card-description">This spell allows for fine-tuning of the project budget, making sure resources are allocated optimally.</div>
+  <div class="card-footer">Use when the project budget is running low or needs adjustment.</div>
+</div>
+
+   
+       <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell7" data-spell="Deadline Shield">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/19.png" width="250" height="140"></div>
+        <div class="card-title">Deadline Shield</div>
+        <div class="card-type">Project Management</div>
+        <div class="card-description">Protects the project timeline, preventing unplanned delays or distractions.</div>
+        <div class="card-footer">Use when deadlines are at risk.</div>
+      </div>
+      
+    </div>
+
+    <!-- Risk Management Spells -->
+    <div id="RiskManagement" class="tabcontent">
+      
+      <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell12" data-spell="Cloak of Adaptability">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/14.png" width="250" height="140"></div>
+        <div class="card-title">Cloak of Adaptability</div>
+        <div class="card-type">Risk Management</div>
+        <div class="card-description">Allows the team to quickly adapt to changes and unexpected challenges.</div>
+        <div class="card-footer">Best for rapid shifts in priorities or scope.</div>
+      </div>
+
+      <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell13" data-spell="Distortion of Priorities">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/15.png" width="250" height="140"></div>
+        <div class="card-title">Distortion of Priorities</div>
+        <div class="card-type">Risk Management</div>
+        <div class="card-description">Reorders tasks based on changing risk levels and impact.</div>
+        <div class="card-footer">Useful for reprioritizing the project backlog.</div>
+      </div>
+
+      <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell14" data-spell="Whirlwind of Optimization">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/16.png" width="250" height="140"></div>
+        <div class="card-title">Whirlwind of Optimization</div>
+        <div class="card-type">Risk Management</div>
+        <div class="card-description">Streamlines processes to remove bottlenecks and inefficiencies.</div>
+        <div class="card-footer">Ideal for solving workflow problems.</div>
+      </div>
+
+            <!-- Bug Exorcism -->
+<div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spellBugExorcism" data-spell="Bug Exorcism">
+  <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/18.png" width="250" height="140"></div>
+  <div class="card-title">Bug Exorcism</div>
+  <div class="card-type">Risk Management</div>
+  <div class="card-description">Quickly identifies and resolves critical bugs in the production environment to avoid major issues.</div>
+  <div class="card-footer">Use in cases of critical bugs affecting production systems.</div>
+  </div>
+      
+      <!-- Refactor Blast -->
+<div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spellRefactorBlast" data-spell="Refactor Blast">
+  <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/21.png" width="250" height="140"></div>
+  <div class="card-title">Refactor Blast</div>
+  <div class="card-type">Risk Management</div>
+  <div class="card-description">A powerful spell to refactor legacy code and reduce technical debt, improving long-term maintainability.</div>
+  <div class="card-footer">Use when technical debt becomes an obstacle to development.</div>
+</div>
+
+<!-- Tech Debt Cleanse -->
+<div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spellTechDebtCleanse" data-spell="Tech Debt Cleanse">
+  <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/22.png" width="250" height="140"></div>
+  <div class="card-title">Tech Debt Cleanse</div>
+  <div class="card-type">Risk Management</div>
+  <div class="card-description">Eliminates accumulated technical debt that slows down the team’s progress, allowing for smoother development.</div>
+  <div class="card-footer">Use when unresolved technical debt hinders progress.</div>
+</div>
+      
+
+      
+      <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell11" data-spell="Shield of Uncertainty">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/13.png" width="250" height="140"></div>
+        <div class="card-title">Shield of Uncertainty</div>
+        <div class="card-type">Risk Management</div>
+        <div class="card-description">Defends the team from risks and unknowns that can derail the project.</div>
+        <div class="card-footer">Use when tackling new or uncertain areas of work.</div>
+      </div>
+      
+        <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell15" data-spell="Risk Forecaster">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/17.png" width="250" height="140"></div>
+        <div class="card-title">Risk Forecaster</div>
+        <div class="card-type">Risk Management</div>
+        <div class="card-description">Predicts potential risks and helps prepare mitigation strategies.</div>
+        <div class="card-footer">Use when assessing project risks.</div>
+      </div>
+      
+    </div>
+
+    <!-- Communication Spells -->
+    <div id="Communication" class="tabcontent">
+
+      <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell13" data-spell="Call to All">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/20.png" width="250" height="140"></div>
+        <div class="card-title">Call to All</div>
+        <div class="card-type">Communication</div>
+        <div class="card-description">Calls for a team meeting to resolve issues and align on objectives.</div>
+        <div class="card-footer">Use to bring everyone back on the same page.</div>
+      </div>
+
+      <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell14" data-spell="Voice of Reason">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/23.png" width="250" height="140"></div>
+        <div class="card-title">Voice of Reason</div>
+        <div class="card-type">Communication</div>
+        <div class="card-description">Cuts through confusion and refocuses discussions on key objectives and issues.</div>
+        <div class="card-footer">Use in cases of conflicting stakeholder demands.</div>
+      </div>
+      <!-- Role Clarification -->
+<div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spellRoleClarification" data-spell="Role Clarification">
+  <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/24.png" width="250" height="140"></div>
+  <div class="card-title">Role Clarification</div>
+  <div class="card-type">Communication</div>
+  <div class="card-description">Defines clear responsibilities for each team member, preventing overlaps and confusion in a cross-functional team.</div>
+  <div class="card-footer">Use when team roles are unclear or responsibilities overlap.</div>
+</div>
+
+<!-- Leadership Charge -->
+<div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spellLeadershipCharge" data-spell="Leadership Charge">
+  <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/25.png" width="250" height="140"></div>
+  <div class="card-title">Leadership Charge</div>
+  <div class="card-type">Communication</div>
+  <div class="card-description">Empowers the team leader to provide clear direction and inspire others, ensuring smooth collaboration.</div>
+  <div class="card-footer">Use when leadership guidance and motivation are required to align the team.</div>
+</div>
+      
+    </div>
+
+    <!-- Stakeholders Spells -->
+    <div id="Stakeholders" class="tabcontent">
+      <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell15" data-spell="Summon Feedback">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/26.png" width="250" height="140"></div>
+        <div class="card-title">Summon Feedback</div>
+        <div class="card-type">Stakeholders</div>
+        <div class="card-description">Summons feedback from clients and stakeholders to ensure alignment.</div>
+        <div class="card-footer">Use when client feedback is needed.</div>
+      </div>
+
+      <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell16" data-spell="Stakeholder Diplomacy">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/27.png" width="250" height="140"></div>
+
+        <div class="card-title">Stakeholder Diplomacy</div>
+        <div class="card-type">Stakeholders</div>
+        <div class="card-description">Balances conflicting stakeholder priorities to ensure smooth project flow.</div>
+        <div class="card-footer">Use to navigate conflicting stakeholder requests.</div>
+      </div>
+
+      <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell17" data-spell="Alliance of Interest">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/28.png" width="250" height="140"></div>
+        <div class="card-title">Alliance of Interest</div>
+        <div class="card-type">Stakeholders</div>
+        <div class="card-description">Builds strategic alliances with stakeholders to ensure long-term project success.</div>
+        <div class="card-footer">Use to build long-term relationships with key stakeholders.</div>
+      </div>
+      
+       <div class="card spell-card" draggable="true" ondragstart="drag(event)" id="spell12" data-spell="Crystal of Communication">
+        <div class="card-image"><img src="https://raw.githubusercontent.com/bezdredoff/production-magic/refs/heads/main/19.png" width="250" height="140"></div>
+        <div class="card-title">Crystal of Communication</div>
+        <div class="card-type">Stakeholders</div>
+        <div class="card-description">Facilitates clear communication between all stakeholders and team members.</div>
+        <div class="card-footer">Use when communication barriers arise.</div>
+      </div>
+      
+    </div>
+  </section>
+
+
+
+  <!-- JavaScript -->
+  <script>
+ let currentCase = null;
+let currentCaseSpells = [];
+let score = 0;
+let spellsRemaining = 0;
+let correctlyUsedSpells = [];
+
+// Start a new adventure
+document.getElementById('startBtn').addEventListener('click', function() {
+  const cases = [
+  {
+    description: 'A new developer feels lost in the team and needs guidance. 🧑‍💻',
+    spellsNeeded: 1,
+    spellNames: ['Mentor’s Aura'],
+    hint: 'Team Management'
+  },
+  {
+    description: 'The team is losing focus and needs a morale boost. 🧑‍💻',
+    spellsNeeded: 2,
+    spellNames: ['Hero\'s Motivation', 'Eye of the Plan'],
+    hint: 'Team Management, Project Management'
+  },
+  {
+    description: 'The team can\'t understand how users interact with their product. 🗣️',
+    spellsNeeded: 1,
+    spellNames: ['Summon Feedback'],
+    hint: 'Stakeholders'
+  },
+  {
+    description: 'The project is falling behind schedule, and the team needs to reprioritize tasks. 📅',
+    spellsNeeded: 2,
+    spellNames: ['Eye of the Plan', 'Distortion of Priorities'],
+    hint: 'Project Management, Risk Management'
+  },
+  {
+    description: 'The development team is struggling with unexpected feature changes and needs to adapt quickly. 🔄',
+    spellsNeeded: 2,
+    spellNames: ['Tempering Features', 'Cloak of Adaptability'],
+    hint: 'Risk Management, Project Management'
+  },
+  {
+    description: 'Several teams face misunderstanding with each other around the workflows of key features implementation. 🔧',
+    spellsNeeded: 1,
+    spellNames: ['Whirlwind of Optimization', 'Call to All'],
+    hint: 'Risk Management, Communication'
+  },
+  {
+    description: 'There is a conflict between two key stakeholders over the project\'s direction. 👥',
+    spellsNeeded: 2,
+    spellNames: ['Stakeholder Diplomacy', 'Voice of Reason'],
+    hint: 'Stakeholders, Communication'
+  },
+  {
+    description: 'The development team is facing a high amount of technical debt that slows progress. 🏗️',
+    spellsNeeded: 2,
+    spellNames: ['Refactor Blast', 'Tech Debt Cleanse'],
+    hint: 'Risk Management'
+  },
+  {
+    description: 'The project budget is running low, and resource allocation needs adjustment. 💰',
+    spellsNeeded: 2,
+    spellNames: ['Budget Tweak', 'Resource Allocation'],
+    hint: 'Project Management'
+  },
+  {
+    description: 'A critical bug was found in production, and it needs to be solved urgently. 🐞',
+    spellsNeeded: 2,
+    spellNames: ['Bug Exorcism','Distortion of Priorities' ],
+    hint: 'Risk Management'
+  },
+  {
+    description: 'The team needs to focus on technical improvements to prepare for future growth. 🚀',
+    spellsNeeded: 2,
+    spellNames: ['Tech Debt Cleanse', 'Vision of Growth'],
+    hint: 'Risk Management, Team Management'
+  },
+  {
+    description: 'A cross-functional team is struggling with unclear responsibilities. ⚙️',
+    spellsNeeded: 2,
+    spellNames: ['Role Clarification', 'Leadership Charge'],
+    hint: 'Communication'
+  }
+];
+
+
+  // Select a random case
+  currentCase = cases[Math.floor(Math.random() * cases.length)];
+
+  // Update the case text and hints
+  document.getElementById('casePlaceholder').textContent = currentCase.description;
+  document.getElementById('spellsNeeded').classList.remove('hidden');
+  document.getElementById('spellCounter').textContent = currentCase.spellsNeeded;
+  document.getElementById('hint').textContent = `You see invisibility! To solve case you need spells from ${currentCase.hint}`;
+  document.getElementById('hint').classList.remove('hidden'); // Show the hint
+  document.getElementById('correctSpellsList').textContent = ''; // Clear used spells list
+  
+  // Reset current case data
+  currentCaseSpells = [];
+  spellsRemaining = currentCase.spellsNeeded;
+  correctlyUsedSpells = [];
+  hint = [''];
+});
+
+
+// Drag and drop functions
+function allowDrop(event) {
+  event.preventDefault();
+}
+
+function drag(event) {
+  event.dataTransfer.setData("spell", event.target.dataset.spell);
+}
+
+function drop(event) {
+  event.preventDefault();
+  const spell = event.dataTransfer.getData("spell");
+
+  if (currentCase && !currentCaseSpells.includes(spell)) {
+    if (currentCase.spellNames.includes(spell)) {
+      currentCaseSpells.push(spell);
+      spellsRemaining--;
+      correctlyUsedSpells.push(spell);
+
+      document.getElementById('correctSpellsList').textContent = `Correct Spells Used: ${correctlyUsedSpells.join(', ')}`;
+      document.getElementById('spellCounter').textContent = spellsRemaining;
+
+      if (spellsRemaining === 0) {
+        showPopup();  // Call the function to show the success popup
+        score += 100;
+        document.getElementById('score').textContent = `Score: ${score}`;
+      }
+    }
+  }
+}
+
+// Show the success popup
+function showPopup() {
+  const successPopup = document.getElementById('successPopup');
+  successPopup.classList.remove('hidden');
+  successPopup.style.display = 'block';  // Make sure it's visible
+}
+
+// Close the success popup and reset the case
+function closePopup() {
+  const successPopup = document.getElementById('successPopup');
+  successPopup.style.display = 'none';  // Hide the popup
+  successPopup.classList.add('hidden');
+  currentCase = null;
+  document.getElementById('casePlaceholder').textContent = 'Start adventure to see your quest';
+  document.getElementById('spellsNeeded').classList.add('hidden');
+  document.getElementById('hint').classList.add('hidden');
+  document.getElementById('correctSpellsList').textContent = '';
+  spellsRemaining = 0;
+  correctlyUsedSpells = [];
+  hint = [''];
+}
+
+// Open the correct tab content and set it as active
+function openTab(evt, tabName) {
+  const tabcontent = document.getElementsByClassName("tabcontent");
+  const tablinks = document.getElementsByClassName("tablinks");
+  
+  for (let i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+
+  for (let i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+
+  document.getElementById(tabName).style.display = "grid";
+  evt.currentTarget.className += " active";
+}
+
+// Open the first tab by default
+document.addEventListener('DOMContentLoaded', function() {
+  const firstTab = document.querySelector('.tablinks');
+  firstTab.click();  // Simulate a click on the first tab to open it by default
+});
+
+
+// Показать поп-ап для неправильного заклинания
+function showWrongSpellPopup() {
+  document.getElementById('wrongSpellPopup').style.display = 'block';
+}
+
+// Закрыть поп-ап для неправильного заклинания
+function closeWrongSpellPopup() {
+  document.getElementById('wrongSpellPopup').style.display = 'none';
+}
+
+// Измените функцию drop для обработки неправильных заклинаний
+function drop(event) {
+  event.preventDefault();
+  const spell = event.dataTransfer.getData("spell");
+
+  if (currentCase && !currentCaseSpells.includes(spell)) {
+    if (currentCase.spellNames.includes(spell)) {
+      // Логика для правильного заклинания
+      currentCaseSpells.push(spell);
+      spellsRemaining--;
+      correctlyUsedSpells.push(spell);
+
+      document.getElementById('correctSpellsList').textContent = `Correct Spells Used: ${correctlyUsedSpells.join(', ')}`;
+      document.getElementById('spellCounter').textContent = spellsRemaining;
+
+      if (spellsRemaining === 0) {
+        showPopup();
+        score += 100;
+        document.getElementById('score').textContent = `Score: ${score}`;
+      }
+    } else {
+      // Если заклинание неправильное, показать поп-ап
+      showWrongSpellPopup();
+    }
+  }
+}
+ 
+  </script>
+</div>
+</body>
+</html>
